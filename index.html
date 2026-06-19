@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>General Relativity Study Group · MSU × USTHB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --space:       #060810;
+      --deep:        #0A0E1A;
+      --panel:       #0F1525;
+      --border:      #1E2840;
+      --muted:       #3A4560;
+      --text-dim:    #7A8AAA;
+      --text:        #C8D0E0;
+      --light:       #F0EDE6;
+      --gold:        #C9A84C;
+      --gold-dim:    #8A6E2A;
+      --violet:      #7B6FA0;
+      --blue:        #4A9EFF;
+      --blue-dim:    #1E4A80;
+      --glow:        rgba(74,158,255,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--space);
+      color: var(--text);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── STARFIELD ── */
+    #stars {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute; border-radius: 50%;
+      background: white;
+      animation: twinkle var(--dur, 3s) ease-in-out infinite var(--delay, 0s);
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: var(--lo, 0.1); }
+      50%       { opacity: var(--hi, 0.8); }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(6,8,16,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 13px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--gold);
+    }
+    .nav-links {
+      display: flex; gap: 32px; list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-dim);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--light); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 120px 48px 80px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* Geodesic canvas */
+    #geodesic-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .hero-iteration {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--violet);
+      margin-bottom: 28px;
+    }
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(42px, 7vw, 88px);
+      font-weight: 700; line-height: 1.0;
+      color: var(--light);
+      margin-bottom: 12px;
+    }
+    .hero-title em {
+      font-style: italic;
+      font-family: 'Source Serif 4', serif;
+      font-weight: 300;
+      color: var(--gold);
+    }
+    .hero-subtitle {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px; font-weight: 400;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 48px;
+    }
+    .hero-equation {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(14px, 2vw, 20px);
+      color: var(--blue); letter-spacing: 0.05em;
+      background: rgba(74,158,255,0.06);
+      border: 1px solid var(--blue-dim);
+      padding: 14px 32px; border-radius: 4px;
+      margin-bottom: 64px;
+    }
+    .hero-cta {
+      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    }
+    .btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 14px 32px; border-radius: 3px;
+      text-decoration: none; transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-primary {
+      background: var(--gold); color: var(--space);
+      border: 1px solid var(--gold);
+    }
+    .btn-primary:hover { background: #e0bc5a; border-color: #e0bc5a; }
+    .btn-secondary {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--text-dim); color: var(--light); }
+    .btn-ghost {
+      background: transparent; color: var(--text-dim);
+      border: 1px solid var(--muted);
+      font-size: 12px;
+    }
+    .btn-ghost:hover { color: var(--light); border-color: var(--text-dim); }
+
+    /* ── SECTIONS ── */
+    section { position: relative; z-index: 1; }
+    .section-inner {
+      max-width: 960px; margin: 0 auto;
+      padding: 96px 48px;
+    }
+    .section-inner.wide { max-width: 1100px; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    .eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 20px;
+    }
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700; color: var(--light);
+      line-height: 1.15; margin-bottom: 28px;
+    }
+    h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px; font-weight: 600;
+      color: var(--light); margin-bottom: 10px;
+    }
+    p { color: var(--text); margin-bottom: 16px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── PEOPLE ── */
+    .people-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px; margin-top: 48px;
+    }
+    .person-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px; padding: 32px;
+      transition: border-color 0.2s;
+    }
+    .person-card:hover { border-color: var(--muted); }
+    .person-role {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--violet); margin-bottom: 10px;
+    }
+    .person-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px; font-weight: 700;
+      color: var(--light); margin-bottom: 6px;
+    }
+    .person-affil {
+      font-size: 14px; color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* ── LECTURE TABLE ── */
+    .schedule-table {
+      width: 100%; border-collapse: collapse;
+      margin-top: 48px; font-size: 15px;
+    }
+    .schedule-table thead tr {
+      border-bottom: 1px solid var(--gold-dim);
+    }
+    .schedule-table th {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold); padding: 0 16px 14px 0;
+      text-align: left;
+    }
+    .schedule-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .schedule-table tbody tr:hover { background: rgba(74,158,255,0.04); }
+    .schedule-table td {
+      padding: 14px 16px 14px 0;
+      vertical-align: top;
+    }
+    .td-week {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; color: var(--text-dim);
+      white-space: nowrap; padding-top: 16px;
+    }
+    .td-lec {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; color: var(--violet);
+      white-space: nowrap;
+    }
+    .td-topic {
+      color: var(--light); font-weight: 400;
+    }
+
+    /* ── TALKS ── */
+    .talks-list {
+      margin-top: 48px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .talk-item {
+      display: grid;
+      grid-template-columns: 80px 200px 1fr;
+      gap: 24px; align-items: start;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .talk-week {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; color: var(--text-dim); padding-top: 2px;
+    }
+    .talk-speaker {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; font-weight: 600; color: var(--gold);
+    }
+    .talk-title {
+      font-size: 15px; color: var(--text);
+    }
+    .talk-tbd {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px; color: var(--muted);
+    }
+
+    /* ── REGISTER ── */
+    .register-section {
+      background: var(--deep);
+    }
+    .register-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px; padding: 56px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .register-box::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(74,158,255,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .register-box h2 { margin-bottom: 16px; }
+    .register-box p { max-width: 520px; margin: 0 auto 36px; }
+    .register-placeholder {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; letter-spacing: 0.15em;
+      color: var(--muted); margin-top: 20px;
+    }
+
+    /* ── LAST YEAR ── */
+    .lastyear-box {
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 32px; align-items: center;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--violet);
+      border-radius: 4px; padding: 36px 40px;
+    }
+    .lastyear-box h3 { color: var(--violet); }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); text-decoration: none; }
+    footer a:hover { color: var(--light); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .hero { padding: 100px 24px 60px; }
+      .section-inner { padding: 64px 24px; }
+      .people-grid { grid-template-columns: 1fr; }
+      .talk-item { grid-template-columns: 1fr; gap: 4px; }
+      .lastyear-box { grid-template-columns: 1fr; }
+      footer { padding: 32px 24px; flex-direction: column; text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .star { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Starfield -->
+<div id="stars" aria-hidden="true"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">GR Study Group · Iteration II</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#lectures">Lectures</a></li>
+    <li><a href="#talks">Talks</a></li>
+    <li><a href="#register">Register</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <canvas id="geodesic-canvas" aria-hidden="true"></canvas>
+  <p class="hero-iteration">Theoretical Physics Student Group — Second Iteration · 2025</p>
+  <h1 class="hero-title">General<br><em>Relativity</em></h1>
+  <p class="hero-subtitle">From Manifolds to the Einstein Equation</p>
+  <div class="hero-equation">G<sub>μν</sub> + Λg<sub>μν</sub> = 8πG · T<sub>μν</sub></div>
+  <div class="hero-cta">
+    <a href="#register" class="btn btn-primary">Register for the Group</a>
+    <a href="#lectures" class="btn btn-secondary">View Lecture Plan</a>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- About -->
+<section id="about">
+  <div class="section-inner">
+    <p class="eyebrow">About the Group</p>
+    <h2>A geometric path into <em style="font-style:italic; color:var(--gold); font-family:'Source Serif 4',serif; font-weight:300;">curved spacetime</em></h2>
+    <p>
+      This study group gives students a structured entry into General Relativity, building from
+      the ground up: smooth manifolds, tangent spaces, and bundles first; then connections
+      and parallel transport; then curvature, spacetime structure, and finally the Einstein equation.
+      Every step emphasizes both the precise geometric language and the physical intuition it encodes.
+    </p>
+    <p>
+      Alongside the main lecture series, the group hosts weekly invited talks on topics at the
+      frontier of mathematical physics — from quantum foundations and Bohmian mechanics to
+      gauge/gravity duality and the deep nature of space and time.
+    </p>
+
+    <div class="people-grid">
+      <div class="person-card">
+        <div class="person-role">Session Leader · Instructor</div>
+        <div class="person-name">Amir Halimi</div>
+        <div class="person-affil">Master's student in Theoretical Physics<br>USTHB</div>
+      </div>
+      <div class="person-card">
+        <div class="person-role">Organizer</div>
+        <div class="person-name">Abderrahmane Labane</div>
+        <div class="person-affil">PhD student in Mathematics<br>Montana State University</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- Lectures -->
+<section id="lectures">
+  <div class="section-inner wide">
+    <p class="eyebrow">Lecture Plan</p>
+    <h2>Ten lectures over seven weeks</h2>
+    <p>The curriculum moves from the abstract geometry of smooth manifolds toward the physics of
+    curved spacetime, arriving at the Einstein field equation.</p>
+
+    <table class="schedule-table" role="table">
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Lecture</th>
+          <th>Topic</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-week">Week 1</td>
+          <td class="td-lec">Lec 01</td>
+          <td class="td-topic">Topological and smooth manifolds</td>
+        </tr>
+        <tr>
+          <td class="td-week">Week 2</td>
+          <td class="td-lec">Lec 02</td>
+          <td class="td-topic">Tangent spaces</td>
+        </tr>
+        <tr>
+          <td class="td-week">Week 3</td>
+          <td class="td-lec">Lec 03</td>
+          <td class="td-topic">Tangent bundle</td>
+        </tr>
+        <tr>
+          <td class="td-week"></td>
+          <td class="td-lec">Lec 04</td>
+          <td class="td-topic">Connection</td>
+        </tr>
+        <tr>
+          <td class="td-week">Week 4</td>
+          <td class="td-lec">Lec 05</td>
+          <td class="td-topic">Parallel transport and curvature</td>
+        </tr>
+        <tr>
+          <td class="td-week"></td>
+          <td class="td-lec">Lec 06</td>
+          <td class="td-topic">Newtonian spacetime</td>
+        </tr>
+        <tr>
+          <td class="td-week">Week 5</td>
+          <td class="td-lec">Lec 07</td>
+          <td class="td-topic">Metric manifolds and symmetries</td>
+        </tr>
+        <tr>
+          <td class="td-week">Week 6</td>
+          <td class="td-lec">Lec 08</td>
+          <td class="td-topic">Relativistic spacetime</td>
+        </tr>
+        <tr>
+          <td class="td-week"></td>
+          <td class="td-lec">Lec 09</td>
+          <td class="td-topic">Integration on a manifold</td>
+        </tr>
+        <tr>
+          <td class="td-week">Week 7</td>
+          <td class="td-lec">Lec 10</td>
+          <td class="td-topic">Einstein equation</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- Talks -->
+<section id="talks">
+  <div class="section-inner wide">
+    <p class="eyebrow">Weekly Talks</p>
+    <h2>Invited talks on mathematical physics<br>&amp; the foundations of spacetime</h2>
+    <p>Each week features an invited speaker presenting topics adjacent to the main curriculum —
+    broadening the group's view from pure geometry toward quantum theory, gravity, and physical foundations.</p>
+
+    <div class="talks-list">
+      <div class="talk-item">
+        <span class="talk-week">Week 1</span>
+        <span class="talk-speaker">Abdou</span>
+        <span class="talk-tbd">Talk title to be announced</span>
+      </div>
+      <div class="talk-item">
+        <span class="talk-week">Week 2</span>
+        <span class="talk-speaker">Ourabah</span>
+        <span class="talk-title">Quantum Mechanics Interpretations and Bohmian Mechanics</span>
+      </div>
+      <div class="talk-item">
+        <span class="talk-week">Week 3</span>
+        <span class="talk-speaker">Mohamed Akram Fellah</span>
+        <span class="talk-title">Gauge/Gravity Duality: From Strings to Information</span>
+      </div>
+      <div class="talk-item">
+        <span class="talk-week">Week 4</span>
+        <span class="talk-speaker">Mohamed Akram Fellah</span>
+        <span class="talk-title">Nature of Space and Time: From Newton to Grothendieck</span>
+      </div>
+      <div class="talk-item">
+        <span class="talk-week">Week 5</span>
+        <span class="talk-speaker">Abdou</span>
+        <span class="talk-tbd">Talk title to be announced</span>
+      </div>
+      <div class="talk-item">
+        <span class="talk-week">Week 6</span>
+        <span class="talk-speaker">Ansas</span>
+        <span class="talk-tbd">Talk title to be announced</span>
+      </div>
+      <div class="talk-item">
+        <span class="talk-week">Week 7</span>
+        <span class="talk-speaker">Anis</span>
+        <span class="talk-tbd">Talk title to be announced</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- Register -->
+<section id="register" class="register-section">
+  <div class="section-inner">
+    <div class="register-box">
+      <p class="eyebrow">Join the Group</p>
+      <h2>Register for the study group</h2>
+      <p>
+        Open to students and researchers with a background in linear algebra, calculus, and basic
+        topology. Fill in the form to confirm your participation.
+      </p>
+      <!-- 🔗 REPLACE THIS HREF WITH YOUR GOOGLE FORM / TYPEFORM LINK -->
+      <a href="#REGISTRATION_FORM_LINK" class="btn btn-primary">Open Registration Form</a>
+      <p class="register-placeholder">
+        ↑ &nbsp;Replace <code>#REGISTRATION_FORM_LINK</code> in the HTML with your actual form URL
+      </p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- Last Year -->
+<section id="lastyear">
+  <div class="section-inner">
+    <p class="eyebrow">Previous Iteration</p>
+    <h2>Geometry &amp; Topology for Physics</h2>
+    <p>Last year's group explored the mathematical foundations that underpin modern physics —
+    differential geometry, topological spaces, fiber bundles, and more — led by Abderrahmane Labane.</p>
+
+    <div class="lastyear-box">
+      <div>
+        <div class="person-role" style="color:var(--violet); margin-bottom:8px;">2024 · First Iteration</div>
+        <h3>Geometry and Topology for Physics</h3>
+        <p style="font-size:14px; margin-top:6px;">
+          Led by <strong style="color:var(--light);">Abderrahmane Labane</strong> · Theoretical Physics Student Group, Iteration I
+        </p>
+      </div>
+      <!-- 🔗 REPLACE THIS HREF WITH YOUR LAST YEAR'S WEBSITE / PAGE LINK -->
+      <a href="#LAST_YEAR_LINK" class="btn btn-ghost" style="white-space:nowrap;">
+        View Last Year's Group →
+      </a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- Footer -->
+<footer>
+  <div>
+    <strong style="color:var(--light);">GR Study Group</strong> &nbsp;·&nbsp;
+    Theoretical Physics Student Group, Iteration II
+  </div>
+  <div style="color:var(--muted);">
+    Organized by Abderrahmane Labane &nbsp;·&nbsp; Led by Amir Halimi
+  </div>
+</footer>
+
+<script>
+  /* ── STARFIELD ── */
+  (function () {
+    const container = document.getElementById('stars');
+    for (let i = 0; i < 180; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = Math.random() * 1.8 + 0.4;
+      s.style.cssText = `
+        width: ${size}px; height: ${size}px;
+        top: ${Math.random() * 100}%;
+        left: ${Math.random() * 100}%;
+        --dur: ${(Math.random() * 5 + 2).toFixed(1)}s;
+        --delay: ${(Math.random() * 6).toFixed(1)}s;
+        --lo: ${(Math.random() * 0.15 + 0.03).toFixed(2)};
+        --hi: ${(Math.random() * 0.55 + 0.3).toFixed(2)};
+      `;
+      container.appendChild(s);
+    }
+  })();
+
+  /* ── GEODESIC CANVAS ── */
+  (function () {
+    const canvas = document.getElementById('geodesic-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, t = 0;
+
+    function resize() {
+      W = canvas.width  = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      t += 0.004;
+
+      const cx = W / 2;
+      const cy = H * 0.52;
+
+      // Draw geodesic grid — warped light cone / spacetime grid
+      const gridR = Math.min(W, H) * 0.46;
+      const lines = 14;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      for (let i = 0; i <= lines; i++) {
+        const f = i / lines; // 0..1
+        const angle = (f - 0.5) * Math.PI * 0.85;
+        const warp = 1 + 0.28 * Math.sin(f * Math.PI); // bulge at center
+
+        ctx.beginPath();
+        const steps = 80;
+        for (let s = 0; s <= steps; s++) {
+          const r = (s / steps) * gridR;
+          const y = r * Math.sin(angle) * warp;
+          const x = r * Math.cos(angle);
+          // add time-based gentle undulation
+          const offset = Math.sin(r * 0.012 - t + f * 2.5) * 6 * (r / gridR);
+          if (s === 0) ctx.moveTo(x, y + offset);
+          else ctx.lineTo(x, y + offset);
+        }
+        const alpha = 0.08 + 0.22 * (1 - Math.abs(f - 0.5) * 2);
+        ctx.strokeStyle = `rgba(74, 158, 255, ${alpha})`;
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+
+        // mirror below
+        ctx.beginPath();
+        for (let s = 0; s <= steps; s++) {
+          const r = (s / steps) * gridR;
+          const y = -r * Math.sin(angle) * warp;
+          const x = r * Math.cos(angle);
+          const offset = Math.sin(r * 0.012 - t + f * 2.5 + Math.PI) * 6 * (r / gridR);
+          if (s === 0) ctx.moveTo(x, y + offset);
+          else ctx.lineTo(x, y + offset);
+        }
+        ctx.stroke();
+      }
+
+      // radial arcs
+      const arcCount = 9;
+      for (let j = 1; j <= arcCount; j++) {
+        const r = (j / arcCount) * gridR;
+        const spread = Math.PI * 0.85;
+        ctx.beginPath();
+        ctx.arc(0, 0, r, -spread / 2, spread / 2);
+        const a2 = 0.04 + 0.12 * (1 - j / arcCount);
+        ctx.strokeStyle = `rgba(201, 168, 76, ${a2})`;
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(0, 0, r, Math.PI - spread / 2, Math.PI + spread / 2);
+        ctx.stroke();
+      }
+
+      // glowing center point
+      const grd = ctx.createRadialGradient(0, 0, 0, 0, 0, 60);
+      grd.addColorStop(0, 'rgba(74,158,255,0.25)');
+      grd.addColorStop(1, 'rgba(74,158,255,0)');
+      ctx.beginPath(); ctx.arc(0, 0, 60, 0, Math.PI * 2);
+      ctx.fillStyle = grd; ctx.fill();
+
+      ctx.restore();
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+</script>
+</body>
+</html>
