@@ -264,7 +264,7 @@
     }
     .talk-item {
       display: grid;
-      grid-template-columns: 80px 200px 1fr;
+      grid-template-columns: 80px 220px 1fr;
       gap: 24px; align-items: start;
       padding: 20px 0;
       border-bottom: 1px solid var(--border);
@@ -273,9 +273,16 @@
       font-family: 'Space Mono', monospace;
       font-size: 11px; color: var(--text-dim); padding-top: 2px;
     }
+    .talk-speaker-block {
+      display: flex; flex-direction: column; gap: 3px;
+    }
     .talk-speaker {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 14px; font-weight: 600; color: var(--gold);
+    }
+    .talk-affil {
+      font-size: 12px; color: var(--text-dim);
+      font-style: italic; line-height: 1.4;
     }
     .talk-title {
       font-size: 15px; color: var(--text);
@@ -283,6 +290,24 @@
     .talk-tbd {
       font-family: 'Space Mono', monospace;
       font-size: 12px; color: var(--muted);
+    }
+
+    /* ── NOTICE BOX ── */
+    .notice-box {
+      background: rgba(123,111,160,0.08);
+      border: 1px solid rgba(123,111,160,0.35);
+      border-left: 3px solid var(--violet);
+      border-radius: 4px;
+      padding: 20px 28px;
+      margin-top: 48px;
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+    .notice-box strong {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--violet); display: block; margin-bottom: 8px;
     }
 
     /* ── REGISTER ── */
@@ -501,39 +526,66 @@
     <div class="talks-list">
       <div class="talk-item">
         <span class="talk-week">Week 1</span>
-        <span class="talk-speaker">Abdou</span>
-        <span class="talk-tbd">Talk title to be announced</span>
+        <div class="talk-speaker-block">
+          <span class="talk-speaker">Abderrahmane Labane</span>
+          <span class="talk-affil">PhD student in Mathematics · Montana State University</span>
+        </div>
+        <span class="talk-title">Theoretical Physics, Mathematical Physics and Physical Mathematics</span>
       </div>
       <div class="talk-item">
         <span class="talk-week">Week 2</span>
-        <span class="talk-speaker">Ourabah</span>
+        <div class="talk-speaker-block">
+          <span class="talk-speaker">Prof. Kamel Ourabah</span>
+          <span class="talk-affil">USTHB</span>
+        </div>
         <span class="talk-title">Quantum Mechanics Interpretations and Bohmian Mechanics</span>
       </div>
       <div class="talk-item">
         <span class="talk-week">Week 3</span>
-        <span class="talk-speaker">Mohamed Akram Fellah</span>
+        <div class="talk-speaker-block">
+          <span class="talk-speaker">Mohamed Akram Fellah</span>
+          <span class="talk-affil">Ph.D. candidate in Theoretical Physics · Badji Mokhtar Annaba University</span>
+        </div>
         <span class="talk-title">Gauge/Gravity Duality: From Strings to Information</span>
       </div>
       <div class="talk-item">
         <span class="talk-week">Week 4</span>
-        <span class="talk-speaker">Mohamed Akram Fellah</span>
+        <div class="talk-speaker-block">
+          <span class="talk-speaker">Mohamed Akram Fellah</span>
+          <span class="talk-affil">Ph.D. candidate in Theoretical Physics · Badji Mokhtar Annaba University</span>
+        </div>
         <span class="talk-title">Nature of Space and Time: From Newton to Grothendieck</span>
       </div>
       <div class="talk-item">
         <span class="talk-week">Week 5</span>
-        <span class="talk-speaker">Abdou</span>
-        <span class="talk-tbd">Talk title to be announced</span>
+        <div class="talk-speaker-block">
+          <span class="talk-speaker">Mustapha Anis Younes</span>
+          <span class="talk-affil">Ph.D.</span>
+        </div>
+        <span class="talk-title">Quantum Cryptography: Fundamental Concepts and Applications</span>
       </div>
       <div class="talk-item">
         <span class="talk-week">Week 6</span>
-        <span class="talk-speaker">Ansas</span>
-        <span class="talk-tbd">Talk title to be announced</span>
+        <div class="talk-speaker-block">
+          <span class="talk-speaker">Anis Bousclet</span>
+          <span class="talk-affil">Ph.D. student in Geometry, Topology &amp; Mathematical Physics · SISSA, Italy</span>
+        </div>
+        <span class="talk-title">Topological Obstructions on Geometric Structures</span>
       </div>
       <div class="talk-item">
         <span class="talk-week">Week 7</span>
-        <span class="talk-speaker">Anis</span>
+        <div class="talk-speaker-block">
+          <span class="talk-speaker">Anis</span>
+          <span class="talk-affil"></span>
+        </div>
         <span class="talk-tbd">Talk title to be announced</span>
       </div>
+    </div>
+
+    <!-- Notice box -->
+    <div class="notice-box">
+      <strong>ⓘ &nbsp;Notice</strong>
+      This is a student-organized study group. It is not an official university course, and no academic credit, certificate, or official credential will be offered by Montana State University or the University of Science and Technology Houari Boumediene (USTHB).
     </div>
   </div>
 </section>
@@ -550,11 +602,7 @@
         Open to students and researchers with a background in linear algebra, calculus, and basic
         topology. Fill in the form to confirm your participation.
       </p>
-      <!-- 🔗 REPLACE THIS HREF WITH YOUR GOOGLE FORM / TYPEFORM LINK -->
-      <a href="#REGISTRATION_FORM_LINK" class="btn btn-primary">Open Registration Form</a>
-      <p class="register-placeholder">
-        ↑ &nbsp;Replace <code>#REGISTRATION_FORM_LINK</code> in the HTML with your actual form URL
-      </p>
+      <a href="https://forms.gle/z7hNMXWYtR879NS8A" target="_blank" rel="noopener" class="btn btn-primary">Open Registration Form</a>
     </div>
   </div>
 </section>
@@ -577,10 +625,15 @@
           Led by <strong style="color:var(--light);">Abderrahmane Labane</strong> · Theoretical Physics Student Group, Iteration I
         </p>
       </div>
-      <!-- 🔗 REPLACE THIS HREF WITH YOUR LAST YEAR'S WEBSITE / PAGE LINK -->
-      <a href="#LAST_YEAR_LINK" class="btn btn-ghost" style="white-space:nowrap;">
-        View Last Year's Group →
-      </a>
+      <!-- 🔗 Last year's links -->
+      <div style="display:flex; flex-direction:column; gap:10px; flex-shrink:0;">
+        <a href="https://sites.google.com/view/geometry-and-topology-for-phys/talks?authuser=0" target="_blank" rel="noopener" class="btn btn-ghost" style="white-space:nowrap;">
+          Visit Last Year's Site →
+        </a>
+        <a href="https://abderrahmane-labane.github.io/Abderrahmane-Labane/topology-notes.html" target="_blank" rel="noopener" class="btn btn-ghost" style="white-space:nowrap;">
+          Topology Notes →
+        </a>
+      </div>
     </div>
   </div>
 </section>
